@@ -7,3 +7,4 @@ instance/
 node_modules/
 .next/
 .DS_Store
+backend/data/mbti.csv
