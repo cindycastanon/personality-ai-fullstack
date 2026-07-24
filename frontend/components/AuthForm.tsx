@@ -12,7 +12,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(""); setLoading(true);
     try {
-      const data = await apiFetch<{ access_token: string }>(`/auth/${mode}`, {
+      const data = await apiFetch<{ access_token: string }>(`/api/auth/${mode}`, {
         method: "POST", body: JSON.stringify({ email, password }),
       });
       saveToken(data.access_token);
