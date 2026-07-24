@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from flask import Flask, jsonify
+from flask import Flask, app, jsonify
 from .extensions import cors, db, jwt, migrate
 from .routes.analytics import analytics_bp
 from .routes.auth import auth_bp
@@ -25,7 +25,18 @@ def create_app(test_config: dict | None = None) -> Flask:
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, resources={r"/api/*": {"origins": os.getenv("FRONTEND_URL", "http://localhost:3000")}})
+    cors.init_app(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:3000",
+                "https://personality-ai-fullstack.vercel.app",
+                "https://personality-ai-fullstack-hh3n638wb-cindycastanons-projects.vercel.app",
+            ]
+        }
+    },
+)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(predictions_bp)
