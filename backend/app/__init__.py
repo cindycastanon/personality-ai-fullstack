@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
-from flask import Flask, app, jsonify
+
+from flask import Flask, jsonify
+
 from .extensions import cors, db, jwt, migrate
 from .routes.analytics import analytics_bp
 from .routes.auth import auth_bp
@@ -10,12 +12,17 @@ from .services.prediction_service import PredictionService
 
 def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__)
+
     app.config.update(
         SQLALCHEMY_DATABASE_URI=os.getenv(
-            "DATABASE_URL", "sqlite:///personality_ai.db"
+            "DATABASE_URL",
+            "sqlite:///personality_ai.db",
         ).replace("postgres://", "postgresql://", 1),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        JWT_SECRET_KEY=os.getenv("JWT_SECRET_KEY", "change-this-in-production"),
+        JWT_SECRET_KEY=os.getenv(
+            "JWT_SECRET_KEY",
+            "change-this-in-production",
+        ),
         JSON_SORT_KEYS=False,
     )
 
@@ -25,18 +32,19 @@ def create_app(test_config: dict | None = None) -> Flask:
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+
     cors.init_app(
-    app,
-    resources={
-        r"/api/*": {
-            "origins": [
-                "http://localhost:3000",
-                "https://personality-ai-fullstack.vercel.app",
-                "https://personality-ai-fullstack-hh3n638wb-cindycastanons-projects.vercel.app",
-            ]
-        }
-    },
-)
+        app,
+        resources={
+            r"/api/*": {
+                "origins": [
+                    "http://localhost:3000",
+                    "https://personality-ai-fullstack.vercel.app",
+                    r"https://personality-ai-fullstack-.*-cindycastanons-projects\.vercel\.app",
+                ]
+            }
+        },
+    )
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(predictions_bp)
