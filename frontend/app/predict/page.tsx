@@ -14,7 +14,7 @@ export default function PredictPage() {
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(""); setLoading(true);
     try {
-      const data = await apiFetch<{ prediction: Prediction }>("/predictions", { method: "POST", body: JSON.stringify({ text }) });
+      const data = await apiFetch<{ prediction: Prediction }>("/api/predictions", { method: "POST", body: JSON.stringify({ text }) });
       setPrediction(data.prediction);
     } catch (err) { setError(err instanceof Error ? err.message : "Prediction failed."); }
     finally { setLoading(false); }

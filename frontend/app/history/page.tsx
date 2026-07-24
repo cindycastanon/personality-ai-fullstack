@@ -10,17 +10,17 @@ export default function HistoryPage() {
   const [error, setError] = useState("");
 
   async function load() {
-    try { const data = await apiFetch<{ predictions: Prediction[] }>("/predictions"); setItems(data.predictions); }
+    try { const data = await apiFetch<{ predictions: Prediction[] }>("/api/predictions"); setItems(data.predictions); }
     catch (err) { setError(err instanceof Error ? err.message : "Could not load history."); }
   }
   useEffect(() => { load(); }, []);
 
   async function feedback(id: number, is_accurate: boolean) {
-    await apiFetch(`/predictions/${id}/feedback`, { method: "PATCH", body: JSON.stringify({ is_accurate }) });
+    await apiFetch(`/api/predictions/${id}/feedback`, { method: "PATCH", body: JSON.stringify({ is_accurate }) });
     load();
   }
   async function remove(id: number) {
-    await apiFetch(`/predictions/${id}`, { method: "DELETE" });
+    await apiFetch(`/api/predictions/${id}`, { method: "DELETE" });
     setItems((current) => current.filter((item) => item.id !== id));
   }
 
